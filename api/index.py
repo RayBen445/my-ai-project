@@ -9,10 +9,13 @@ app = Flask(__name__)
 client = InferenceClient(token=os.environ.get("HF_TOKEN"))
 
 @app.route('/', methods=['GET'])
+@app.route('/api', methods=['GET'])
+@app.route('/api/', methods=['GET'])
 def home():
     return "<h1>Cool Shot Systems AI is Online 🟢</h1>"
 
 @app.route('/chat', methods=['POST'])
+@app.route('/api/chat', methods=['POST'])
 def chat():
     data = request.json
     user_message = data.get("message", "")
@@ -35,7 +38,6 @@ def chat():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# This is needed for Vercel
-if __name__ == '__main__':
-    app.run()
+# Vercel serverless function handler
+handler = app
 
