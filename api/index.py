@@ -38,6 +38,3 @@ def chat():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Vercel serverless function handler
-handler = app
-
