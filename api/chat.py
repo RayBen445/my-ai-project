@@ -1,10 +1,11 @@
 from flask import Flask, request, jsonify
 from huggingface_hub import InferenceClient
+from werkzeug.exceptions import BadRequest
 import os
 
 app = Flask(__name__)
 
-# CONNECT TO HUGGING FACE
+# CONNECT TO Hugging Face
 # We get the token from Vercel's "Environment Variables" for security
 # Client initialization is deferred to route handler to avoid import-time errors
 _client = None
@@ -31,7 +32,7 @@ def chat():
     
     try:
         data = request.get_json(force=False, silent=False)
-    except (ValueError, TypeError):
+    except BadRequest:
         return jsonify({"error": "Invalid JSON in request body"}), 400
     
     user_message = data.get("message", "").strip()
