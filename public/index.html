@@ -61,6 +61,13 @@
             btn.disabled = false;
             btn.innerText = "Send";
         }
+
+        // Allow Enter key to send message
+        document.getElementById('user-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
     </script>
 </body>
 </html>
