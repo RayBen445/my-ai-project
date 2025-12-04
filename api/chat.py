@@ -31,11 +31,11 @@ def chat():
         return jsonify({"error": "Content-Type must be application/json"}), 400
     
     try:
-        data = request.get_json(force=False, silent=False)
+        data = request.get_json(silent=False)
     except BadRequest:
         return jsonify({"error": "Invalid JSON in request body"}), 400
     
-    user_message = data.get("message", "").strip()
+    user_message = (data.get("message") or "").strip()
 
     if not user_message:
         return jsonify({"error": "No message provided"}), 400
