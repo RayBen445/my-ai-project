@@ -8,10 +8,6 @@ app = Flask(__name__)
 # We get the token from Vercel's "Environment Variables" for security
 client = InferenceClient(token=os.environ.get("HF_TOKEN"))
 
-@app.route('/', methods=['GET'])
-def home():
-    return "<h1>Cool Shot Systems AI is Online 🟢</h1>"
-
 @app.route('/chat', methods=['POST'])
 def chat():
     data = request.json
