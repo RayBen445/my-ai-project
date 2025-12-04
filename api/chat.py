@@ -31,12 +31,10 @@ def chat():
     
     try:
         data = request.get_json(force=False, silent=False)
-        if data is None:
-            return jsonify({"error": "Invalid JSON in request body"}), 400
     except (ValueError, TypeError):
         return jsonify({"error": "Invalid JSON in request body"}), 400
     
-    user_message = data.get("message", "")
+    user_message = data.get("message", "").strip()
 
     if not user_message:
         return jsonify({"error": "No message provided"}), 400
