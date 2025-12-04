@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from huggingface_hub import InferenceClient
 from werkzeug.exceptions import BadRequest
 import os
+import threading
 
 app = Flask(__name__)
 
@@ -9,14 +10,18 @@ app = Flask(__name__)
 # We get the token from Vercel's "Environment Variables" for security
 # Client initialization is deferred to route handler to avoid import-time errors
 _client = None
+_client_lock = threading.Lock()
 
 def get_client():
     global _client
     if _client is None:
-        hf_token = os.environ.get("HF_TOKEN")
-        if not hf_token:
-            return None
-        _client = InferenceClient(token=hf_token)
+        with _client_lock:
+            # Double-check after acquiring lock
+            if _client is None:
+                hf_token = os.environ.get("HF_TOKEN")
+                if not hf_token:
+                    return None
+                _client = InferenceClient(token=hf_token)
     return _client
 
 @app.route('/', methods=['POST'])
