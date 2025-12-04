@@ -35,7 +35,15 @@ def chat():
     except BadRequest:
         return jsonify({"error": "Invalid JSON in request body"}), 400
     
-    user_message = data.get("message", "").strip()
+    # Validate that data is a dict and message is a string
+    if not isinstance(data, dict):
+        return jsonify({"error": "Request body must be a JSON object"}), 400
+    
+    message = data.get("message", "")
+    if not isinstance(message, str):
+        return jsonify({"error": "Message must be a string"}), 400
+    
+    user_message = message.strip()
 
     if not user_message:
         return jsonify({"error": "No message provided"}), 400
