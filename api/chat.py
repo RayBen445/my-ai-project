@@ -8,8 +8,8 @@ app = Flask(__name__)
 # We get the token from Vercel's "Environment Variables" for security
 client = InferenceClient(token=os.environ.get("HF_TOKEN"))
 
-@app.route('/chat', methods=['POST'])
-def chat():
+@app.route('/', methods=['POST'])
+def handler():
     data = request.json
     user_message = data.get("message", "")
 
@@ -30,5 +30,3 @@ def chat():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-
