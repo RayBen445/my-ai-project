@@ -9,7 +9,7 @@ app = Flask(__name__)
 client = InferenceClient(token=os.environ.get("HF_TOKEN"))
 
 @app.route('/', methods=['POST'])
-def handler():
+def chat():
     data = request.json
     user_message = data.get("message", "")
 
