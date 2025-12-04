@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cool Shot AI</title>
+    <style>
+        body { font-family: 'Courier New', Courier, monospace; background: #1a1a1a; color: #00ff00; display: flex; flex-direction: column; align-items: center; min-height: 100vh; margin: 0; }
+        h1 { margin-top: 20px; }
+        #chat-box { width: 90%; max-width: 600px; height: 60vh; border: 2px solid #00ff00; overflow-y: scroll; padding: 10px; background: #000; margin-bottom: 20px; border-radius: 8px; }
+        .msg { margin: 10px 0; padding: 8px; border-radius: 5px; }
+        .user { text-align: right; color: #fff; }
+        .ai { text-align: left; color: #00ff00; }
+        .input-area { width: 90%; max-width: 600px; display: flex; gap: 10px; }
+        input { flex: 1; padding: 10px; border: 1px solid #00ff00; background: #000; color: #fff; border-radius: 5px; outline: none; }
+        button { padding: 10px 20px; background: #00ff00; color: #000; border: none; font-weight: bold; cursor: pointer; border-radius: 5px; }
+        button:disabled { background: #555; }
+    </style>
+</head>
+<body>
+    <h1>Cool Shot AI 🧠</h1>
+    <div id="chat-box"></div>
+    <div class="input-area">
+        <input type="text" id="user-input" placeholder="Ask the Professor...">
+        <button onclick="sendMessage()" id="send-btn">Send</button>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            const input = document.getElementById('user-input');
+            const chatBox = document.getElementById('chat-box');
+            const btn = document.getElementById('send-btn');
+            const text = input.value;
+
+            if (!text) return;
+
+            // 1. Show User Message
+            chatBox.innerHTML += `<div class="msg user"><b>You:</b> ${text}</div>`;
+            input.value = '';
+            btn.disabled = true;
+            btn.innerText = "Thinking...";
+
+            try {
+                // 2. Call your Python Backend
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: text })
+                });
+
+                const data = await response.json();
+
+                // 3. Show AI Message
+                chatBox.innerHTML += `<div class="msg ai"><b>AI:</b> ${data.reply}</div>`;
+            } catch (error) {
+                chatBox.innerHTML += `<div class="msg ai" style="color:red">Error: ${error.message}</div>`;
+            }
+
+            // Scroll to bottom and reset button
+            chatBox.scrollTop = chatBox.scrollHeight;
+            btn.disabled = false;
+            btn.innerText = "Send";
+        }
+    </script>
+</body>
+</html>
+
