@@ -6,11 +6,23 @@ app = Flask(__name__)
 
 # CONNECT TO HUGGING FACE
 # We get the token from Vercel's "Environment Variables" for security
-client = InferenceClient(token=os.environ.get("HF_TOKEN"))
+hf_token = os.environ.get("HF_TOKEN")
+if not hf_token:
+    raise ValueError("HF_TOKEN environment variable is required")
+
+client = InferenceClient(token=hf_token)
 
 @app.route('/', methods=['POST'])
 def chat():
-    data = request.json
+    # Validate content type and parse JSON
+    if not request.is_json:
+        return jsonify({"error": "Content-Type must be application/json"}), 400
+    
+    try:
+        data = request.get_json()
+    except Exception:
+        return jsonify({"error": "Invalid JSON in request body"}), 400
+    
     user_message = data.get("message", "")
 
     if not user_message:
